@@ -1,0 +1,35 @@
+{
+	"name": "acf/research-lab-directory",
+	"title": "Research Lab Directory",
+	"description": "Filterable directory of Research Lab entries.",
+	"category": "pitchfork-lab-directory",
+	"icon": "search",
+	"keywords": [
+		"research",
+		"labs",
+		"directory",
+		"filter"
+	],
+	"acf": {
+		"mode": "edit",
+		"renderTemplate": "research-lab-directory.php",
+		"blockVersion": 3
+	},
+	"supports": {
+		"anchor": true,
+		"spacing": {
+			"margin": [
+				"top",
+				"bottom"
+			],
+			"padding": false
+		},
+		"classname": true,
+		"align": false,
+		"color": {
+			"background": false,
+			"text": false,
+			"link": false
+		}
+	}
+}
