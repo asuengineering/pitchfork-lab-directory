@@ -12,18 +12,17 @@
 		var searchInput = block.querySelector('.pfld-search');
 		var areaInputs = Array.prototype.slice.call(block.querySelectorAll('.pfld-area-filter'));
 		var recruitingInputs = Array.prototype.slice.call(block.querySelectorAll('.pfld-recruiting-filter'));
+		var filterForm = block.querySelector('.pfld-filter-form');
 		var resetButton = block.querySelector('.pfld-reset');
 		var visibleCount = block.querySelector('.pfld-visible-count');
 		var noResults = block.querySelector('.pfld-no-results');
 
-		function getSelectedAreas() {
-			return areaInputs
-				.filter(function (input) {
-					return input.checked;
-				})
-				.map(function (input) {
-					return input.value;
-				});
+		function getSelectedArea() {
+			var selected = areaInputs.find(function (input) {
+				return input.checked;
+			});
+
+			return selected ? selected.value : '';
 		}
 
 		function recruitingIsChecked() {
@@ -40,21 +39,19 @@
 			});
 		}
 
-		function matchesAreas(item, selectedAreas) {
-			if (!selectedAreas.length) {
+		function matchesArea(item, selectedArea) {
+			if (!selectedArea) {
 				return true;
 			}
 
 			var itemAreas = (item.dataset.areas || '').split(/\s+/).filter(Boolean);
 
-			return selectedAreas.some(function (area) {
-				return itemAreas.indexOf(area) !== -1;
-			});
+			return itemAreas.indexOf(selectedArea) !== -1;
 		}
 
 		function applyFilters() {
 			var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
-			var selectedAreas = getSelectedAreas();
+			var selectedArea = getSelectedArea();
 			var recruitingOnly = recruitingIsChecked();
 			var count = 0;
 
@@ -62,7 +59,7 @@
 				var searchText = item.dataset.search || '';
 				var matchesSearch = !query || searchText.indexOf(query) !== -1;
 				var matchesRecruiting = !recruitingOnly || item.dataset.recruiting === '1';
-				var isVisible = matchesSearch && matchesRecruiting && matchesAreas(item, selectedAreas);
+				var isVisible = matchesSearch && matchesRecruiting && matchesArea(item, selectedArea);
 
 				item.hidden = !isVisible;
 
@@ -95,14 +92,22 @@
 			});
 		});
 
+		if (filterForm) {
+			filterForm.addEventListener('submit', function (event) {
+				event.preventDefault();
+			});
+		}
+
 		if (resetButton) {
-			resetButton.addEventListener('click', function () {
+			resetButton.addEventListener('click', function (event) {
+				event.preventDefault();
+
 				if (searchInput) {
 					searchInput.value = '';
 				}
 
 				areaInputs.forEach(function (input) {
-					input.checked = false;
+					input.checked = input.value === '';
 				});
 
 				recruitingInputs.forEach(function (input) {

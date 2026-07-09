@@ -66,21 +66,24 @@ if ( $show_area_filters ) {
 	}
 }
 
-$total_count = (int) $labs_query->post_count;
-$class_attr  = implode( ' ', array_map( 'sanitize_html_class', $block_attr ) );
+$has_area_filters    = $show_area_filters && ! empty( $filter_terms );
+$has_filter_controls = $show_search || $has_area_filters || $show_recruiting_filter;
+$total_count         = (int) $labs_query->post_count;
+
+if ( ! $has_filter_controls ) {
+	$block_attr[] = 'pfld-directory-no-filters';
+}
+
+$class_attr = implode( ' ', array_map( 'sanitize_html_class', $block_attr ) );
 ?>
 
 <div<?php echo $anchor; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> class="<?php echo esc_attr( $class_attr ); ?>" style="<?php echo esc_attr( $spacing ); ?>" data-pfld-directory="<?php echo esc_attr( $block_id ); ?>">
-	<div class="pfld-result-summary">
-		<span class="pfld-summary-icon" aria-hidden="true">i</span>
-		<span role="status" aria-live="polite">There are <span class="pfld-visible-count"><?php echo esc_html( $total_count ); ?></span> research organizations that match your query.</span>
-		<?php if ( $show_recruiting_filter ) : ?>
-			<span class="pfld-summary-recruiting">
-				<input id="<?php echo esc_attr( $block_id ); ?>-recruiting-inline" class="pfld-recruiting-filter" type="checkbox" value="1">
-				<label for="<?php echo esc_attr( $block_id ); ?>-recruiting-inline"><?php esc_html_e( 'Currently recruiting students', 'pitchfork-lab-directory' ); ?></label>
-			</span>
-		<?php endif; ?>
-	</div>
+	<?php if ( $has_filter_controls ) : ?>
+		<div class="pfld-result-summary">
+			<span class="pfld-summary-icon" aria-hidden="true">i</span>
+			<span role="status" aria-live="polite">There are <span class="pfld-visible-count"><?php echo esc_html( $total_count ); ?></span> research organizations matching your query.</span>
+		</div>
+	<?php endif; ?>
 
 	<div class="pfld-layout">
 		<div class="pfld-results">
@@ -105,13 +108,11 @@ $class_attr  = implode( ' ', array_map( 'sanitize_html_class', $block_attr ) );
 					}
 
 					$content_plain = wp_strip_all_tags( strip_shortcodes( get_post_field( 'post_content', $lab_id ) ) );
-					$summary       = wp_trim_words( $content_plain, 55, '&hellip;' );
+					$summary       = wp_trim_words( $content_plain, 55, '...' );
 					$search_text   = strtolower( $title . ' ' . $content_plain . ' ' . implode( ' ', $term_names ) );
-					$card_tag      = $external_url ? 'a' : 'article';
-					$card_attrs    = $external_url ? ' href="' . esc_url( $external_url ) . '"' : '';
 					?>
 
-					<<?php echo esc_html( $card_tag ); ?> class="pfld-lab" data-pfld-lab data-search="<?php echo esc_attr( $search_text ); ?>" data-areas="<?php echo esc_attr( implode( ' ', $term_slugs ) ); ?>" data-recruiting="<?php echo $recruiting ? '1' : '0'; ?>"<?php echo $card_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<article class="pfld-lab" data-pfld-lab data-search="<?php echo esc_attr( $search_text ); ?>" data-areas="<?php echo esc_attr( implode( ' ', $term_slugs ) ); ?>" data-recruiting="<?php echo $recruiting ? '1' : '0'; ?>">
 						<div class="pfld-lab-media">
 							<?php
 							if ( has_post_thumbnail( $lab_id ) ) {
@@ -133,7 +134,13 @@ $class_attr  = implode( ' ', array_map( 'sanitize_html_class', $block_attr ) );
 						</div>
 
 						<div class="pfld-lab-content">
-							<h3 class="pfld-lab-title"><?php echo esc_html( $title ); ?></h3>
+							<h3 class="pfld-lab-title">
+								<?php if ( $external_url ) : ?>
+									<a class="pfld-lab-title-link" href="<?php echo esc_url( $external_url ); ?>"><?php echo esc_html( $title ); ?></a>
+								<?php else : ?>
+									<?php echo esc_html( $title ); ?>
+								<?php endif; ?>
+							</h3>
 							<?php if ( $summary ) : ?>
 								<p class="pfld-lab-summary"><?php echo esc_html( $summary ); ?></p>
 							<?php endif; ?>
@@ -150,7 +157,7 @@ $class_attr  = implode( ' ', array_map( 'sanitize_html_class', $block_attr ) );
 								</div>
 							<?php endif; ?>
 						</div>
-					</<?php echo esc_html( $card_tag ); ?>>
+					</article>
 					<?php
 				endwhile;
 				wp_reset_postdata();
@@ -160,30 +167,47 @@ $class_attr  = implode( ' ', array_map( 'sanitize_html_class', $block_attr ) );
 			<p class="pfld-no-results" hidden><?php esc_html_e( 'No research organizations match your query.', 'pitchfork-lab-directory' ); ?></p>
 		</div>
 
-		<aside class="pfld-filters" aria-label="<?php esc_attr_e( 'Filter research lab results', 'pitchfork-lab-directory' ); ?>">
-			<h2><?php esc_html_e( 'Filter the results.', 'pitchfork-lab-directory' ); ?></h2>
+		<?php if ( $has_filter_controls ) : ?>
+			<aside class="pfld-filters" aria-label="<?php esc_attr_e( 'Filter research lab results', 'pitchfork-lab-directory' ); ?>">
+				<form class="uds-form pfld-filter-form">
+					<h2><?php esc_html_e( 'Filter the results.', 'pitchfork-lab-directory' ); ?></h2>
 
-			<?php if ( $show_search ) : ?>
-				<div class="pfld-filter-group pfld-filter-search">
-					<label for="<?php echo esc_attr( $block_id ); ?>-search" class="screen-reader-text"><?php esc_html_e( 'Search research labs', 'pitchfork-lab-directory' ); ?></label>
-					<input id="<?php echo esc_attr( $block_id ); ?>-search" class="pfld-search" type="search" placeholder="<?php esc_attr_e( 'Search ...', 'pitchfork-lab-directory' ); ?>">
-				</div>
-			<?php endif; ?>
-
-			<?php if ( $show_area_filters && ! empty( $filter_terms ) ) : ?>
-				<fieldset class="pfld-filter-group">
-					<legend><?php esc_html_e( 'Research Areas', 'pitchfork-lab-directory' ); ?></legend>
-					<?php foreach ( $filter_terms as $term ) : ?>
-						<?php $term_id = $block_id . '-area-' . sanitize_html_class( $term->slug ); ?>
-						<div class="pfld-checkbox-row">
-							<input id="<?php echo esc_attr( $term_id ); ?>" class="pfld-area-filter" type="checkbox" value="<?php echo esc_attr( sanitize_title( $term->slug ) ); ?>">
-							<label for="<?php echo esc_attr( $term_id ); ?>"><?php echo esc_html( $term->name ); ?></label>
+					<?php if ( $show_search ) : ?>
+						<div class="form-group pfld-filter-group pfld-filter-search">
+							<label for="<?php echo esc_attr( $block_id ); ?>-search" class="screen-reader-text"><?php esc_html_e( 'Search research labs', 'pitchfork-lab-directory' ); ?></label>
+							<input id="<?php echo esc_attr( $block_id ); ?>-search" class="form-control pfld-search" type="search" placeholder="<?php esc_attr_e( 'Search ...', 'pitchfork-lab-directory' ); ?>">
 						</div>
-					<?php endforeach; ?>
-				</fieldset>
-			<?php endif; ?>
+					<?php endif; ?>
 
-			<button class="btn btn-maroon pfld-reset" type="button"><?php esc_html_e( 'Reset', 'pitchfork-lab-directory' ); ?></button>
-		</aside>
+					<?php if ( $has_area_filters ) : ?>
+						<fieldset class="form-group pfld-filter-group">
+							<legend><?php esc_html_e( 'Research Areas', 'pitchfork-lab-directory' ); ?></legend>
+							<div class="form-check">
+								<input id="<?php echo esc_attr( $block_id ); ?>-area-all" class="form-check-input pfld-area-filter" name="<?php echo esc_attr( $block_id ); ?>-research-area" type="radio" value="" checked>
+								<label class="form-check-label" for="<?php echo esc_attr( $block_id ); ?>-area-all"><?php esc_html_e( 'All research areas', 'pitchfork-lab-directory' ); ?></label>
+							</div>
+							<?php foreach ( $filter_terms as $term ) : ?>
+								<?php $term_id = $block_id . '-area-' . sanitize_html_class( $term->slug ); ?>
+								<div class="form-check">
+									<input id="<?php echo esc_attr( $term_id ); ?>" class="form-check-input pfld-area-filter" name="<?php echo esc_attr( $block_id ); ?>-research-area" type="radio" value="<?php echo esc_attr( sanitize_title( $term->slug ) ); ?>">
+									<label class="form-check-label" for="<?php echo esc_attr( $term_id ); ?>"><?php echo esc_html( $term->name ); ?></label>
+								</div>
+							<?php endforeach; ?>
+						</fieldset>
+					<?php endif; ?>
+
+					<?php if ( $show_recruiting_filter ) : ?>
+						<div class="form-group pfld-filter-group pfld-recruiting-panel-control">
+							<div class="form-check">
+								<input id="<?php echo esc_attr( $block_id ); ?>-recruiting" class="form-check-input pfld-recruiting-filter" type="checkbox" value="1">
+								<label class="form-check-label" for="<?php echo esc_attr( $block_id ); ?>-recruiting"><?php esc_html_e( 'Currently recruiting students', 'pitchfork-lab-directory' ); ?></label>
+							</div>
+						</div>
+					<?php endif; ?>
+
+					<button class="btn btn-maroon pfld-reset" type="reset"><?php esc_html_e( 'Reset', 'pitchfork-lab-directory' ); ?></button>
+				</form>
+			</aside>
+		<?php endif; ?>
 	</div>
 </div>

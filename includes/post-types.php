@@ -59,6 +59,19 @@ function pfld_register_research_lab_post_type() {
 add_action( 'init', 'pfld_register_research_lab_post_type' );
 
 /**
+ * Ensure featured images are available for Research Labs even if a theme has
+ * limited thumbnail support to specific post types.
+ */
+function pfld_enable_research_lab_featured_images() {
+	if ( ! current_theme_supports( 'post-thumbnails' ) ) {
+		add_theme_support( 'post-thumbnails' );
+	}
+
+	add_post_type_support( 'research-lab', 'thumbnail' );
+}
+add_action( 'after_setup_theme', 'pfld_enable_research_lab_featured_images', 20 );
+
+/**
  * Register Research Area taxonomy.
  */
 function pfld_register_research_area_taxonomy() {
