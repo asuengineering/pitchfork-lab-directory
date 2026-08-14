@@ -31,7 +31,7 @@
 	text-decoration: none;
 }
 
-.pfld-lab + .pfld-lab {
+.pfld-lab+.pfld-lab {
 	border-top: 1px solid var(--pfld-border);
 }
 
@@ -100,17 +100,18 @@
 	margin-top: var(--pfld-spacing-2);
 }
 
-.pfld-area-badge,
-.pfld-recruiting-badge {
+.badge.pfld-area-badge,
+.badge.pfld-recruiting-badge {
 	background-color: var(--pfld-gray);
-	border: 0;
 	color: var(--pfld-black);
+	border: 0;
 	font-size: 0.8125rem;
 	line-height: 1.2;
 }
 
-.pfld-recruiting-badge {
+.badge.pfld-recruiting-badge {
 	background-color: var(--pfld-gold);
+	color: var(--pfld-black);
 	display: inline-block;
 }
 
