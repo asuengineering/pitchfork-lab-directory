@@ -10,29 +10,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Add a Pitchfork Lab Directory block category.
+ * Ensure a Pitchfork Blocks category is available without duplicating it.
  *
- * @param array                 $categories Existing block categories.
+ * @param array                        $categories Existing block categories.
  * @param WP_Block_Editor_Context|null $editor_context Editor context.
  * @return array
  */
-function pfld_block_categories( $categories, $editor_context = null ) {
+function pfld_ensure_pitchfork_blocks_category( $categories, $editor_context = null ) {
 	foreach ( $categories as $category ) {
-		if ( isset( $category['slug'] ) && 'pitchfork-lab-directory' === $category['slug'] ) {
+		if ( isset( $category['slug'] ) && 'pitchfork-blocks' === $category['slug'] ) {
 			return $categories;
 		}
 	}
 
-	$category = array(
-		'slug'  => 'pitchfork-lab-directory',
-		'title' => __( 'Pitchfork Lab Directory', 'pitchfork-lab-directory' ),
+	$categories[] = array(
+		'slug'  => 'pitchfork-blocks',
+		'title' => __( 'Pitchfork Blocks', 'pitchfork-lab-directory' ),
 	);
-
-	array_unshift( $categories, $category );
 
 	return $categories;
 }
-add_filter( 'block_categories_all', 'pfld_block_categories', 10, 2 );
+add_filter( 'block_categories_all', 'pfld_ensure_pitchfork_blocks_category', 10, 2 );
 
 /**
  * Register ACF blocks.

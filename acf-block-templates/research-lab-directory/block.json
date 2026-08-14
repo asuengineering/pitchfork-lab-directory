@@ -2,7 +2,7 @@
 	"name": "acf/research-lab-directory",
 	"title": "Research Lab Directory",
 	"description": "Filterable directory of Research Lab entries.",
-	"category": "pitchfork-lab-directory",
+	"category": "pitchfork-blocks",
 	"icon": "search",
 	"keywords": [
 		"research",
