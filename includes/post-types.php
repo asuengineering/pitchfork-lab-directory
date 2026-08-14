@@ -93,7 +93,7 @@ function pfld_limit_research_lab_editor_blocks( $allowed_block_types, $block_edi
 
 	return array( 'core/paragraph' );
 }
-add_filter( 'allowed_block_types_all', 'pfld_limit_research_lab_editor_blocks', 10, 2 );
+add_filter( 'allowed_block_types_all', 'pfld_limit_research_lab_editor_blocks', 20, 2 );
 
 /**
  * Register Research Area taxonomy.
