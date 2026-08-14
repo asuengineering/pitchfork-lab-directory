@@ -11,7 +11,6 @@
 		var items = Array.prototype.slice.call(block.querySelectorAll('[data-pfld-lab]'));
 		var searchInput = block.querySelector('.pfld-search');
 		var areaInputs = Array.prototype.slice.call(block.querySelectorAll('.pfld-area-filter'));
-		var areaSelect = block.querySelector('.pfld-area-select');
 		var recruitingInputs = Array.prototype.slice.call(block.querySelectorAll('.pfld-recruiting-filter'));
 		var filterForm = block.querySelector('.pfld-filter-form');
 		var resetButton = block.querySelector('.pfld-reset');
@@ -20,6 +19,7 @@
 		var resultStatus = block.querySelector('.pfld-result-status');
 		var totalCount = parseInt(block.dataset.totalCount, 10);
 		var noResults = block.querySelector('.pfld-no-results');
+		var desktopAreaFilterQuery = window.matchMedia ? window.matchMedia('(min-width: 768px)') : null;
 
 		if (isNaN(totalCount)) {
 			totalCount = items.length;
@@ -30,6 +30,10 @@
 		}
 
 		function getSelectedArea() {
+			if (desktopAreaFilterQuery && !desktopAreaFilterQuery.matches) {
+				return '';
+			}
+
 			var selected = areaInputs.find(function (input) {
 				return input.checked;
 			});
@@ -38,17 +42,13 @@
 				return selected.value;
 			}
 
-			return areaSelect ? areaSelect.value : '';
+			return '';
 		}
 
 		function setSelectedArea(value) {
 			areaInputs.forEach(function (input) {
 				input.checked = input.value === value;
 			});
-
-			if (areaSelect) {
-				areaSelect.value = value;
-			}
 		}
 
 		function recruitingIsChecked() {
@@ -104,7 +104,7 @@
 			}
 
 			if (resultStatus) {
-				resultStatus.hidden = !filtersAreActive;
+				resultStatus.hidden = !filtersAreActive || (count === totalCount && count !== 0);
 			}
 
 			if (noResults) {
@@ -126,11 +126,12 @@
 			});
 		});
 
-		if (areaSelect) {
-			areaSelect.addEventListener('change', function () {
-				setSelectedArea(areaSelect.value);
-				applyFilters();
-			});
+		if (desktopAreaFilterQuery) {
+			if (desktopAreaFilterQuery.addEventListener) {
+				desktopAreaFilterQuery.addEventListener('change', applyFilters);
+			} else if (desktopAreaFilterQuery.addListener) {
+				desktopAreaFilterQuery.addListener(applyFilters);
+			}
 		}
 
 		recruitingInputs.forEach(function (input) {

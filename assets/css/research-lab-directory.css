@@ -3,8 +3,7 @@
 .pfld-directory {
 	--pfld-border: #d0d0d0;
 	--pfld-gray: #e8e8e8;
-	--pfld-light-blue: #e5f6fd;
-	--pfld-blue: #00a3e0;
+	--pfld-black: #191919;
 	--pfld-maroon: #8c1d40;
 	--pfld-gold: #ffc627;
 	--pfld-spacing-1: 0.5rem;
@@ -103,9 +102,9 @@
 
 .pfld-area-badge,
 .pfld-recruiting-badge {
-	background-color: #e8e8e8;
+	background-color: var(--pfld-gray);
 	border: 0;
-	color: #191919;
+	color: var(--pfld-black);
 	font-size: 0.8125rem;
 	line-height: 1.2;
 }
@@ -128,7 +127,6 @@
 }
 
 .pfld-result-status {
-	font-weight: 700;
 	line-height: 1.4;
 	margin: calc(var(--pfld-spacing-2) * -1) 0 var(--pfld-spacing-3);
 }
@@ -147,14 +145,6 @@
 
 .pfld-search {
 	max-width: 100%;
-	width: 100%;
-}
-
-.pfld-area-select-group {
-	display: none;
-}
-
-.pfld-area-select {
 	width: 100%;
 }
 
@@ -192,6 +182,10 @@
 		flex-direction: column-reverse;
 	}
 
+	.pfld-filters {
+		width: 100%;
+	}
+
 	.pfld-lab {
 		gap: var(--pfld-spacing-2);
 		grid-template-columns: 96px minmax(0, 1fr);
@@ -208,10 +202,6 @@
 
 	.pfld-area-radio-group {
 		display: none;
-	}
-
-	.pfld-area-select-group {
-		display: block;
 	}
 }
 

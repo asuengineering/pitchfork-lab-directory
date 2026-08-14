@@ -37,6 +37,14 @@ function pfld_register_research_lab_post_type() {
 		'labels'              => $labels,
 		'description'         => __( 'Research labs used by the Lab Directory block.', 'pitchfork-lab-directory' ),
 		'supports'            => array( 'title', 'editor', 'thumbnail' ),
+		'template'            => array(
+			array(
+				'core/paragraph',
+				array(
+					'placeholder' => __( 'Describe the lab\'s work, research focus, and areas of impact. Keep this concise and suitable for a directory listing. Approximately 50-100 words is a good target.', 'pitchfork-lab-directory' ),
+				),
+			),
+		),
 		'hierarchical'        => false,
 		'public'              => false,
 		'show_ui'             => true,
@@ -67,6 +75,25 @@ function pfld_enable_research_lab_featured_images() {
 	add_post_type_support( 'research-lab', 'thumbnail' );
 }
 add_action( 'after_setup_theme', 'pfld_enable_research_lab_featured_images', 20 );
+
+/**
+ * Restrict the Research Lab description editor to the supported content model.
+ *
+ * @param bool|array              $allowed_block_types Allowed block types.
+ * @param WP_Block_Editor_Context $block_editor_context Current editor context.
+ * @return bool|array
+ */
+function pfld_limit_research_lab_editor_blocks( $allowed_block_types, $block_editor_context ) {
+	if (
+		empty( $block_editor_context->post ) ||
+		'research-lab' !== $block_editor_context->post->post_type
+	) {
+		return $allowed_block_types;
+	}
+
+	return array( 'core/paragraph' );
+}
+add_filter( 'allowed_block_types_all', 'pfld_limit_research_lab_editor_blocks', 10, 2 );
 
 /**
  * Register Research Area taxonomy.

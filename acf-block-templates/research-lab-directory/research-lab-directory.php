@@ -205,15 +205,6 @@ $class_attr = implode( ' ', array_map( 'sanitize_html_class', $block_attr ) );
 							<?php endforeach; ?>
 						</fieldset>
 
-						<div class="form-group pfld-filter-group pfld-area-select-group">
-							<label for="<?php echo esc_attr( $block_id ); ?>-area-select"><?php esc_html_e( 'Research Area', 'pitchfork-lab-directory' ); ?></label>
-							<select id="<?php echo esc_attr( $block_id ); ?>-area-select" class="form-control pfld-area-select">
-								<option value=""><?php esc_html_e( 'All research areas', 'pitchfork-lab-directory' ); ?></option>
-								<?php foreach ( $filter_terms as $term ) : ?>
-									<option value="<?php echo esc_attr( sanitize_title( $term->slug ) ); ?>"><?php echo esc_html( $term->name ); ?></option>
-								<?php endforeach; ?>
-							</select>
-						</div>
 					<?php endif; ?>
 
 					<?php if ( $show_recruiting_filter ) : ?>
