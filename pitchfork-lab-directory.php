@@ -2,8 +2,13 @@
 /**
  * Plugin Name: Pitchfork Lab Directory
  * Description: Research Lab content type and filterable ACF directory block for Pitchfork sites.
- * Version: 0.1.0
+ * Version: 1.0.0
+ * Requires at least: 7.0.4
+ * Tested up to: 7.0.4
+ * Requires PHP: 7.4
  * Author: ASU Engineering
+ * License: GPL-3.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: pitchfork-lab-directory
  *
  * @package Pitchfork_Lab_Directory
@@ -13,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PFLD_VERSION', '0.1.0' );
+define( 'PFLD_VERSION', '1.0.0' );
 define( 'PFLD_PLUGIN_FILE', __FILE__ );
 define( 'PFLD_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PFLD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
